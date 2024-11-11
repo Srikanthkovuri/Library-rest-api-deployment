@@ -1,0 +1,65 @@
+# statefulset controller for stateful application in prod namesapce i.e, postgres-db
+---
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: db-sfs
+    namespace: prod
+    annotations:
+      kubernetes.io/change-cause: v1.0
+  spec:
+    selector:
+      matchLabels:
+        app: books-db
+    serviceName: books-db-svc
+    minReadySeconds: 5
+    replicas: 2
+    template:
+      metadata:
+        labels:
+          app: books-db
+      spec:
+        containers:
+        - name: books-postgres
+          image: postgres:15-alpine
+          envFrom:
+            - configMapRef:
+                name: db-config
+          ports:
+          - containerPort: 5432
+          resources:
+            requests:
+              memory: 80M
+              cpu: 200m
+            limits:
+              memory: 450M
+              cpu: 500m
+          volumeMounts:
+          - name: postgres
+            mountPath: /var/lib/postgresql/data
+    volumeClaimTemplates:
+    - metadata:
+        name: postgres
+      storageClassName: managed
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+---
+# Headless service object to access stateful application in production namespace
+---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: books-db-svc
+    namespace: prod
+  spec:
+    type: ClusterIP
+    clusterIP: None
+    selector:
+      app: books-db
+    ports:
+    - port: 5432
+      targetPort: 5432
+---

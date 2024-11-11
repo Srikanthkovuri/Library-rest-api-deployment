@@ -1,0 +1,21 @@
+# Configmaps for books,postgres db in production namespace
+---
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: books-config
+    namespace: prod
+  data:
+    DATABASE_URL: postgresql://srikanth:srikanthkovuri@books-db-svc:5432/library
+---
+---
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: db-config
+    namespace: prod
+  data:
+    POSTGRES_USER: srikanth
+    POSTGRES_PASSWORD: srikanthkovuri
+    POSTGRES_DB: library
+---

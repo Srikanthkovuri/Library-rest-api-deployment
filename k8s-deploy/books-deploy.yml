@@ -1,0 +1,55 @@
+# Deployment controller for stateless application in prod namespace i.e, books api
+---
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: library-deployment
+    namespace: prod
+    annotations:
+      kubernetes.io/change-cause: "v1.0"
+  spec:
+    minReadySeconds: 3
+    replicas: 2
+    strategy:
+      rollingUpdate:
+        maxSurge: 50%
+        maxUnavailable: 50%
+    selector:
+      matchLabels:
+        app: books
+    template:
+      metadata:
+        labels:
+          app: books
+          version: v1.0
+      spec:
+        containers:
+          - name: lib-books
+            image: srikanthkovuri/lib-book:1.0
+            envFrom:
+              - configMapRef:
+                  name: books-config
+            resources:
+              requests:
+                memory: 80M
+                cpu: 100m
+              limits:
+                memory: 180M
+                cpu: 500m
+            ports:
+              - containerPort: 8000
+---
+# service object for to access application from outside 
+---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: books-svc
+    namespace: prod
+  spec:
+    type: LoadBalancer
+    selector:
+      app: books
+    ports:
+    - port: 8000
+      targetPort: 8000
