@@ -1,4 +1,4 @@
-# Kubernetes Deployment with Minikube
+# Kubernetes Deployment with AKS
 
 This guide will help you deploy two microservices—a stateful and a stateless application—using managed kubeneretes i.e `aks`.
 
@@ -8,6 +8,14 @@ This guide will help you deploy two microservices—a stateful and a stateless a
 2. Kubectl installed
 
 ## Step-by-Step Guide
+
+### clone repository
+```bash
+git clone https://github.com/Srikanthkovuri/Library-rest-api-deployment.git
+```
+```bash
+cd .\Library-rest-api-deployment
+```
 
 ### 1. Creating cluster
 
